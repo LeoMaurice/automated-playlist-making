@@ -40,6 +40,8 @@ class SpotiSciencePredicter():
 
         self.NLPENGLISH = spacy.load('en_core_web_lg')
         self.NLPSPANISH = spacy.load('es_core_news_lg')
+        self.NLPFRENCH = spacy.load('fr_core_news_lg')
+        self.NPLGERMAN = spacy.load('de_core_news_lg')
         self.PUNTUACTION = string.punctuation
         self.PATHMODEL = pkg_resources.resource_filename(__name__,"weights/mood.joblib")
 
@@ -74,7 +76,14 @@ class SpotiSciencePredicter():
             mytokens = self.NLPSPANISH(lyric)
             mytokens = [ word.lemma_.lower() if word.lemma_ != "-PRON-" else word.lower_ for word in mytokens]
             mytokens = [ word for word in mytokens if word not in self.STOPWORDSSPANISH and word not in self.PUNTUACTION] 
-        
+        if "french" in  lang:
+            mytokens = self.NLPFRENCH(lyric)
+            mytokens = [ word.lemma_.lower() if word.lemma_ != "-PRON-" else word.lower_ for word in mytokens]
+            mytokens = [ word for word in mytokens if word not in self.STOPWORDSSPANISH and word not in self.PUNTUACTION] 
+        if "german" in  lang:
+            mytokens = self.NLPGERMAN(lyric)
+            mytokens = [ word.lemma_.lower() if word.lemma_ != "-PRON-" else word.lower_ for word in mytokens]
+            mytokens = [ word for word in mytokens if word not in self.STOPWORDSSPANISH and word not in self.PUNTUACTION] 
         mytokens = " ".join([i for i in mytokens])
         return mytokens
 
@@ -90,7 +99,14 @@ class SpotiSciencePredicter():
         see more info about stop_words and n_grams parameters in sklearn documentation
         https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.CountVectorizer.html
         """
-        vectorizer = CountVectorizer(min_df=1, max_df=0.9, stop_words=stop_words, token_pattern='[a-zA-Z\-][a-zA-Z\-]{2,}',ngram_range=n_grams)
+        #vectorizer = CountVectorizer(input = 'content',
+        #    min_df= 1, # issue : int
+        #    max_df=1.0, 
+        #    stop_words=stop_words, 
+        #    token_pattern='[a-zA-Z\-][a-zA-Z\-]{2,}',
+        #    ngram_range=n_grams
+        #    )
+        vectorizer = CountVectorizer(token_pattern="[a-zA-Z\-][a-zA-Z\-]{2,}")
         lyrics_vectorized = vectorizer.fit_transform(lyrics)
         return vectorizer,lyrics_vectorized
 
@@ -153,13 +169,13 @@ class SpotiSciencePredicter():
         https://scikit-learn.org/stable/auto_examples/applications/plot_topics_extraction_with_nmf_lda.html
         https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.TruncatedSVD.html
         """
+        
         lyric_list = self.__inner__lyric_to_list(lyric)
         processed_lyric = [self.__inner__spacy_tokenizer(lyric=sentence,lang=lang) for sentence in lyric_list]
         vectorizer, data_vectorized = self.__inner__lyric_vectorizer(processed_lyric,stop_words=stopwords,n_grams=n_grams)
         trained_model = self.__train__model(data_vectorized,modelname=model,num_topics=n_topics)
         topics = self.__inner__selected_topics(trained_model,vectorizer,top_n=top_n)
         return topics
-
 
     #---------------
     #Mood Prediction
