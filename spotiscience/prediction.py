@@ -188,9 +188,24 @@ class SpotiSciencePredicter():
         ----------
         song: dict - the data of the song 
         """
+        spotify_mood_indicators = ['length',
+            'acousticness',
+            'danceability',
+            'energy',
+            'instrumentalness',
+            'liveness',
+            'valence',
+            'loudness',
+            'speechiness',
+            'tempo',
+            'key',
+            'time_signature']
+        
         predictmodel = joblib.load(self.PATHMODEL)
         moods = {0:'calm',1:'energy',2:'happy',3:'sad'}
-        song_features = np.array(list(song.values())[6:]).reshape(-1,1).T
+
+        indicators = np.array([song[i] for i in spotify_mood_indicators])
+        song_features = indicators.reshape(-1,1).T
         
         preds = predictmodel.predict(song_features)
         return moods[preds[0]]
