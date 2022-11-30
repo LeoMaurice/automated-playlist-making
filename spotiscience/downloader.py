@@ -15,6 +15,8 @@ from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 import lyricsgenius
 import re
 import numpy as np 
+import logging
+import argparse
 
 class SpotiScienceDownloader():
     """
@@ -38,6 +40,9 @@ class SpotiScienceDownloader():
     """
     def __init__(self,credentials):
 
+        """self.logger = logging.getLogger('examples.add_tracks_to_playlist')
+        self.logging.basicConfig(level='DEBUG')"""
+
         self.client_id = credentials['client_id']
         self.client_secret = credentials['client_secret']
         self.redirect_url = credentials['redirect_url'] 
@@ -47,6 +52,7 @@ class SpotiScienceDownloader():
         self.scope_playlist = 'playlist-modify-public'
         self.scope_user = 'user-library-read'
         self.scope_user_modify = 'user-library-modify' 
+        self.scope_playlist_modify = 'playlist-modify-private'
 
     def __inner__clean_spotify_id(self,id):
         """
@@ -311,10 +317,39 @@ class SpotiScienceDownloader():
         artist = sp.search(q=artist,type='artist',limit=1)
         return artist
 
+    def get_args(playlist_ids, playlist_url):
+        parser = argparse.ArgumentParser(description='Adds track to user playlist')
+        parser.add_argument('-t', '--tids', action='append',
+                        required=True, help='Track ids')
+        parser.add_argument('-p', '--playlist', required=True,
+                        help='Playlist to add track to')
+        return parser.parse_args()
+
+    def add_tracks_playlist(self, songs, playlist):
+        scope = self.scope_playlist
+        #args = self.get_args()
+        print("scope : ", scope, "playlist : ",playlist)
+
+        sp = self.__inner__auth_spotify_user_music(scope=scope)
+        print(sp.current_user())
+        for song in songs:
+            
+            sp.user_playlist_add_tracks(sp.current_user(), playlist, [song])
+        """
+        for id in playlist_ids:
+            sp.user_playlist_add_tracks(self.user_id,
+            playlist_id, id)"""
+    def add_playlist(self, name, songs):
+        scope = self.scope_playlist
+        print("scope : ", scope, "playlist : ",name)
+        sp = self.__inner__auth_spotify_user_music(scope=scope)
+        sp
+
 
     
 
 
+    
 
                     
     
