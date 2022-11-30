@@ -326,12 +326,15 @@ class SpotiScienceDownloader():
         return parser.parse_args()
 
     def add_tracks_playlist(self, songs, playlist):
+        """
+        add list of tracks to a playlist
+        songs : list of songs URI
+        playlist : playlist id
+        """
         scope = self.scope_playlist
         #args = self.get_args()
-        print("scope : ", scope, "playlist : ",playlist)
 
         sp = self.__inner__auth_spotify_user_music(scope=scope)
-        print(sp.current_user())
         for song in songs:
             
             sp.user_playlist_add_tracks(sp.current_user(), playlist, [song])
@@ -340,10 +343,17 @@ class SpotiScienceDownloader():
             sp.user_playlist_add_tracks(self.user_id,
             playlist_id, id)"""
     def add_playlist(self, name, songs):
+        """
+        Create a playlist and then add a list of songs
+        name : name of the future playlist
+        songs : list of songs URI
+        """
         scope = self.scope_playlist
-        print("scope : ", scope, "playlist : ",name)
+        print("Creating with scope : ", scope, "the playlist : ",name)
         sp = self.__inner__auth_spotify_user_music(scope=scope)
-        sp
+        playlist = sp.user_playlist_create(user = self.user_id, name = name)
+        id = playlist['id']
+        self.add_tracks_playlist(songs, id)
 
 
     
