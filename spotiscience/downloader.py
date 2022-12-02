@@ -303,7 +303,10 @@ class SpotiScienceDownloader():
         genius = lyricsgenius.Genius(self.genius_acess_token)
         genius.remove_section_headers = True
         song = genius.search_song(songname,artistname)
-        return song.lyrics
+        if song == None:
+            return ''
+        else:
+            return song.lyrics
 
     
     def get_artist_information(self,artist):
