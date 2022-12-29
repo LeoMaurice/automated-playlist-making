@@ -14,6 +14,8 @@ import numpy as np
 import spacy
 from spacy.lang.en.stop_words import STOP_WORDS as SWE
 from spacy.lang.es.stop_words import STOP_WORDS as SWS
+from spacy.lang.fr.stop_words import STOP_WORDS as SWF
+from spacy.lang.de.stop_words import STOP_WORDS as SWD
 import string
 from sklearn.decomposition import NMF, LatentDirichletAllocation, TruncatedSVD
 from sklearn.feature_extraction.text import CountVectorizer
@@ -37,6 +39,8 @@ class SpotiSciencePredicter():
     def __init__(self):
         self.STOPWORDSENGLISH = list(SWE)
         self.STOPWORDSSPANISH = list(SWS)
+        self.STOPWORDSFRENCH = list(SWF)
+        self.STOPWORDSGERMAN = list(SWD)
 
         self.NLPENGLISH = spacy.load('en_core_web_lg')
         self.NLPSPANISH = spacy.load('es_core_news_lg')
@@ -79,11 +83,11 @@ class SpotiSciencePredicter():
         if "french" in  lang:
             mytokens = self.NLPFRENCH(lyric)
             mytokens = [ word.lemma_.lower() if word.lemma_ != "-PRON-" else word.lower_ for word in mytokens]
-            mytokens = [ word for word in mytokens if word not in self.STOPWORDSSPANISH and word not in self.PUNTUACTION] 
+            mytokens = [ word for word in mytokens if word not in self.STOPWORDSFRENCH and word not in self.PUNTUACTION] 
         if "german" in  lang:
             mytokens = self.NLPGERMAN(lyric)
             mytokens = [ word.lemma_.lower() if word.lemma_ != "-PRON-" else word.lower_ for word in mytokens]
-            mytokens = [ word for word in mytokens if word not in self.STOPWORDSSPANISH and word not in self.PUNTUACTION] 
+            mytokens = [ word for word in mytokens if word not in self.STOPWORDSGERMAN and word not in self.PUNTUACTION] 
         mytokens = " ".join([i for i in mytokens])
         return mytokens
 
