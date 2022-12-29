@@ -2,3 +2,9 @@
 .cache*
 *.pyc
 !spotiscience/__pycache__/*
+spotiscience/__pycache__/__init__.cpython-310.pyc
+spotiscience/__pycache__/credentials.cpython-310.pyc
+spotiscience/__pycache__/prediction.cpython-310.pyc
+spotiscience/__pycache__/playlists.cpython-310.pyc
+spotiscience/__pycache__/downloader.cpython-310.pyc
+
