@@ -22,8 +22,6 @@ from sklearn.feature_extraction.text import CountVectorizer
 from collections import defaultdict
 import joblib
 import pkg_resources
-
-
 class SpotiSciencePredicter():
 
     """
@@ -45,7 +43,7 @@ class SpotiSciencePredicter():
         self.NLPENGLISH = spacy.load('en_core_web_lg')
         self.NLPSPANISH = spacy.load('es_core_news_lg')
         self.NLPFRENCH = spacy.load('fr_core_news_lg')
-        self.NPLGERMAN = spacy.load('de_core_news_lg')
+        self.NLPGERMAN = spacy.load('de_core_news_lg')
         self.PUNTUACTION = string.punctuation
         self.PATHMODEL = pkg_resources.resource_filename(__name__,"weights/mood.joblib")
 
@@ -66,15 +64,16 @@ class SpotiSciencePredicter():
 
     def __inner__spacy_tokenizer(self,lyric,lang):
         """
-        Return a list with tokenize sentece of lyric list
+        Return a list with tokenize sentence of lyric list
         Attributes
         ----------
         lyric: str - the lyric of the song
-        lang: the lenguage model used for tokenize (available are spanish and english)
+        lang: the lenguage model used for tokenize (available are spanish, english, french, german)
         """
         if "english" in lang:
             mytokens = self.NLPENGLISH(lyric)
             mytokens = [ word.lemma_.lower() if word.lemma_ != "-PRON-" else word.lower_ for word in mytokens]
+            # suppression pronoms
             mytokens = [ word for word in mytokens if word not in self.STOPWORDSENGLISH and word not in self.PUNTUACTION] 
         if "spanish" in lang:
             mytokens = self.NLPSPANISH(lyric)
@@ -154,7 +153,7 @@ class SpotiSciencePredicter():
             RESULTS[n_topic].append(topics)
         return RESULTS
 
-    def predict_topic_lyric(self,lyric,model='lda',lang='english',stopwords=None,n_grams=(1,1),n_topics=1,top_n=10):
+    def predict_topic_lyric(self,lyric,model='lda',lang='english',stopwords=None,n_grams=(1,1),n_topics=10,top_n=10):
         """
         main method used to predict the topics of lyrics 
         Attributes
@@ -258,3 +257,28 @@ class SpotiSciencePredicter():
 
             similar_songs[object_name] = similarity[0:top_n]
         return similar_songs
+    def __get_token(self,lang,words):
+        if "english" in lang:
+            mytokens = self.NLPENGLISH(words)
+        if "spanish" in lang:
+            mytokens = self.NLPSPANISH(words)
+        if "french" in  lang:
+            mytokens = self.NLPFRENCH(words)
+        if "german" in  lang:
+            mytokens = self.NLPGERMAN(words)
+        return mytokens
+    def calculate_topics_similarities(self,song1,song2):
+        topics1 = " ".join(song1['topics'])
+        coef1 = song1["topics_coeff"]
+        coef2 = song2["topics_coeff"]
+        topics2 = " ".join(song2['topics'])
+        tokens1 = self.__get_token(song1['lang'],topics1)
+        tokens2 = self.__get_token(song2['lang'],topics2)
+        similarity = 0
+        # we calculate the weighted sum of the similarity of each topics
+        for i in range(len(tokens1)):
+            similarity_i = 0
+            for j in range(len(tokens2)):
+                similarity_i += coef2[j]*tokens1[i].similarity(tokens2[j])
+            similarity = similarity + coef1[i] * similarity_i/sum(coef2)
+        return similarity/sum(coef1)

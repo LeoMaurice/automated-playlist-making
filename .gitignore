@@ -1,2 +1,4 @@
 .cache
-.cache-draskeglom
+.cache*
+
+!spotiscience/__pycache__/*
