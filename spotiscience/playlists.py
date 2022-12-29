@@ -1,1 +1,1 @@
-playlists = {'nom':'id'}
+playlists = []
