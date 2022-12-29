@@ -1,3 +1,4 @@
 from spotiscience.downloader import SpotiScienceDownloader
 from spotiscience.prediction import SpotiSciencePredicter
 from spotiscience.credentials import CREDENTIALS
+from spotiscience.playlists import playlists
