@@ -30,6 +30,7 @@ The idea is to mix different sources of similarities between songs. [1] states t
 
 ## Authors and acknowledgment
 Cristóbal Veas - Data Scientist , feel free to contact me on [Linkedln](https://www.linkedin.com/in/cristobal-veas/)
+
 Léopold Maurice - Data Scientist, feel free to contact me on [![LinkedIn](https://img.shields.io/twitter/url?color=blue&label=LinkedIn&logo=linkedin&style=for-the-badge&url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fleopold-maurice)](https://linkedin.com/in/leopold-maurice) [![Mastodon](https://img.shields.io/twitter/url?color=purple&label=Mastodon&logo=mastodon&style=for-the-badge&url=https%3A%2F%2Fsciences.social%2F%40lmaurice)](https://sciences.social/@lmaurice) 
 
 ## Contributing
