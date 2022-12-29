@@ -1,3 +1,1 @@
-playlists = [
-    {'id':'','name':''},
-    ]
+playlists = []
