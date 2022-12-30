@@ -22,6 +22,9 @@ from sklearn.feature_extraction.text import CountVectorizer
 from collections import defaultdict
 import joblib
 import pkg_resources
+from langdetect import detect
+
+
 class SpotiSciencePredicter():
 
     """
@@ -35,6 +38,12 @@ class SpotiSciencePredicter():
     """
 
     def __init__(self):
+        self.languages = {
+            'en' : 'english',
+            'fr' : 'french',
+            'es': 'spanish',
+            'de': 'german'
+        }
         self.STOPWORDSENGLISH = list(SWE)
         self.STOPWORDSSPANISH = list(SWS)
         self.STOPWORDSFRENCH = list(SWF)
@@ -282,3 +291,28 @@ class SpotiSciencePredicter():
                 similarity_i += coef2[j]*tokens1[i].similarity(tokens2[j])
             similarity = similarity + coef1[i] * similarity_i/sum(coef2)
         return similarity/sum(coef1)
+    def calculate_genres_links(self, genres, song):
+        scores = {}
+        for genre in genres:
+            lang_genre = "english" #self.languages[detect(genre)]
+            token = self.__get_token(lang_genre,genre)
+            similarity = 0
+            if len(song['genre']) == 0:
+                scores[genre] = None
+            else:
+                try:
+                    for g in song['genre']:
+                        lang_g = "english"#self.languages[detect(g)]
+                        tk = self.__get_token(lang_g,g)
+                        s = token.similarity(tk)
+                        if s > similarity: # on prend le score qui match le mieux
+                            # the mean would dilute too much the similarity or boost it too much
+                            similarity = s
+                except TypeError as e:
+                    print(song)
+                scores[genre]=similarity
+        return scores
+                
+
+
+    
