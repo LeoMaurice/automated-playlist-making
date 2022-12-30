@@ -283,9 +283,11 @@ class SpotiSciencePredicter():
         topics2 = " ".join(song2['topics'])
         tokens1 = self.__get_token(song1['lang'],topics1)
         tokens2 = self.__get_token(song2['lang'],topics2)
+        print(tokens1,"/",tokens2)
         similarity = 0
         # we calculate the weighted sum of the similarity of each topics
         for i in range(len(tokens1)):
+            print(tokens1[i])
             similarity_i = 0
             for j in range(len(tokens2)):
                 similarity_i += coef2[j]*tokens1[i].similarity(tokens2[j])
@@ -312,7 +314,20 @@ class SpotiSciencePredicter():
                     print(song)
                 scores[genre]=similarity
         return scores
-                
-
-
+    
+    def calculate_to_main_topics_similarities(self, main, song):
+        if song['has_lyrics']:
+            topics = song['topics']
+            coef = song['topics_coeff']
+            tokens = self.__get_token(song['lang']," ".join(topics))
+            main_token = self.__get_token('english', main)
+            similarity = 0
+            #print(len(tokens),len(main_token),len(coef))
+            for i  in range(len(tokens)):
+                t = tokens[i]
+                c = coef[i]
+                similarity += main_token.similarity(t)*c
+            return similarity/sum(coef)
+        else:
+            return 0
     
