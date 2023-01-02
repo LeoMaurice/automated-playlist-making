@@ -316,18 +316,24 @@ class SpotiSciencePredicter():
         return scores
     
     def calculate_to_main_topics_similarities(self, main, song):
-        if song['has_lyrics']:
-            topics = song['topics']
-            coef = song['topics_coeff']
-            tokens = self.__get_token(song['lang']," ".join(topics))
-            main_token = self.__get_token('english', main)
-            similarity = 0
-            #print(len(tokens),len(main_token),len(coef))
-            for i  in range(len(tokens)):
-                t = tokens[i]
-                c = coef[i]
-                similarity += main_token.similarity(t)*c
-            return similarity/sum(coef)
-        else:
-            return 0
+        try:
+            if song['has_lyrics']:
+                topics = song['topics']
+                coef = song['topics_coeff']
+                tokens = self.__get_token(song['lang']," ".join(topics))
+                main_token = self.__get_token('english', main)
+                similarity = 0
+                #print(len(tokens),len(main_token),len(coef))
+                for i  in range(len(tokens)):
+                    t = tokens[i]
+                    c = coef[i]
+                    similarity += main_token.similarity(t)*c
+                return similarity/sum(coef)
+            else:
+                return 0
+        except TypeError as e:
+            print(e)
+            print(song['has_lyrics'],print(song['lyrics']))
+            print(song['lang'])
+
     
